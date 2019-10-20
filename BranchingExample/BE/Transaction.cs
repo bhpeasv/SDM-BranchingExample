@@ -15,7 +15,7 @@ namespace BranchingExample.BE
 
         public double Amount { get; private set;}
 
-        public Transaction(int id, DateTime dt, string message, double amount)
+        public Transaction(int id, string message, double amount)
         {
             if (id <= 0)
                 throw new ArgumentException("Invalid transaction id");
@@ -24,7 +24,7 @@ namespace BranchingExample.BE
                 throw new ArgumentException("Invalid transaction message");
 
             TransactionID = id;
-            Time = dt;
+            Time = DateTime.Now;
             Message = message;
             Amount = amount;
         }

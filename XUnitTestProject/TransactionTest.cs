@@ -11,14 +11,15 @@ namespace XUnitTestProject
         public void CreatevalidTransaction()
         {
             int id = 1;
-            DateTime dt = new DateTime(2019, 1, 1, 10, 11, 12);
             string message = "Just a message";
             double amount = 0.01;
 
-            ITransaction t = new Transaction(id, dt, message, amount);
+            DateTime before = DateTime.Now;
+            ITransaction t = new Transaction(id, message, amount);
+            DateTime after = DateTime.Now;
 
             Assert.Equal(id, t.TransactionID);
-            Assert.Equal(dt, t.Time);
+            Assert.True(before <= t.Time && t.Time <= after);
             Assert.Equal(message, t.Message);
             Assert.Equal(amount, t.Amount);
         }
@@ -28,13 +29,12 @@ namespace XUnitTestProject
         [InlineData(-1)]
         public void CreateTransactionInvalidTransactionID_ExpectArgumentException(int id)
         {
-            DateTime dt = new DateTime(2019, 1, 1, 10, 11, 12);
             string message = "Just a message";
             double amount = 0.01;
 
             ITransaction t = null;
 
-            var ex = Assert.Throws<ArgumentException>(() => t = new Transaction(id, dt, message, amount));
+            var ex = Assert.Throws<ArgumentException>(() => t = new Transaction(id, message, amount));
 
             Assert.Equal("Invalid transaction id", ex.Message);
             Assert.Null(t);
@@ -46,12 +46,11 @@ namespace XUnitTestProject
         public void CreateTransactionInvalidMessage_ExpectArgumentException(string message)
         {
             int id = 1;
-            DateTime dt = new DateTime(2019, 1, 1, 10, 11, 12);
             double amount = 0.01;
 
             ITransaction t = null;
 
-            var ex = Assert.Throws<ArgumentException>(() => t = new Transaction(id, dt, message, amount));
+            var ex = Assert.Throws<ArgumentException>(() => t = new Transaction(id, message, amount));
 
             Assert.Equal("Invalid transaction message", ex.Message);
             Assert.Null(t);

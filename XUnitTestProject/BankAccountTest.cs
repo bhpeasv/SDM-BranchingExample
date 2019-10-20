@@ -11,11 +11,21 @@ namespace XUnitTestProject
         public void CreateValidEmptyBankAccount()
         {
             int accNumber = 1;
+
+            DateTime before = DateTime.Now;
             IBankAccount acc = new BankAccount(accNumber);
+            DateTime after = DateTime.Now;
 
             Assert.NotNull(acc);
             Assert.Equal(accNumber, acc.AccountNumber);
             Assert.Equal(0, acc.Balance);
+
+            Assert.True(acc.Transactions.Count == 1);
+            ITransaction t = acc.Transactions[0];
+            Assert.Equal(1, t.TransactionID);
+            Assert.True(before <= t.Time && t.Time <= after);
+            Assert.Equal("CREATED", t.Message);
+            Assert.Equal(acc.Balance, t.Amount);
         }
 
         [Theory]
@@ -34,13 +44,24 @@ namespace XUnitTestProject
         [Theory]
         [InlineData(123.45)]
         [InlineData(0.00)]
-        public void CreateValidBankAccountNonNegativeInitialBalance(double initialAmount)
+        public void CreateValidBankAccountNonNegativeInitialBalance(double initialBalance)
         {
             int accNumber = 1;
-            IBankAccount acc = new BankAccount(accNumber, initialAmount);
 
+            DateTime before = DateTime.Now;
+            IBankAccount acc = new BankAccount(accNumber, initialBalance);
+            DateTime after = DateTime.Now;
+
+            Assert.NotNull(acc);
             Assert.Equal(accNumber, acc.AccountNumber);
-            Assert.Equal(initialAmount, acc.Balance);
+            Assert.Equal(initialBalance, acc.Balance);
+
+            Assert.True(acc.Transactions.Count == 1);
+            ITransaction t = acc.Transactions[0];
+            Assert.Equal(1, t.TransactionID);
+            Assert.True(before <= t.Time && t.Time <= after);
+            Assert.Equal("CREATED", t.Message);
+            Assert.Equal(acc.Balance, t.Amount);
         }
 
         [Fact]
@@ -62,9 +83,19 @@ namespace XUnitTestProject
         {
             IBankAccount acc = new BankAccount(1, initialBalance);
 
+            DateTime before = DateTime.Now;
             acc.Deposit(amount);
+            DateTime after = DateTime.Now;
 
             Assert.Equal(expected, acc.Balance);
+
+            Assert.True(acc.Transactions.Count == 2);
+            ITransaction t = acc.Transactions[1];
+            Assert.Equal(2, t.TransactionID);
+            Assert.True(before <= t.Time && t.Time <= after);
+            Assert.Equal("DEPOSIT", t.Message);
+            Assert.Equal(amount, t.Amount);
+
         }
 
         [Fact]
@@ -86,9 +117,18 @@ namespace XUnitTestProject
         {
             IBankAccount acc = new BankAccount(1, initialBalance);
 
+            DateTime before = DateTime.Now;
             acc.Withdraw(amount);
+            DateTime after = DateTime.Now;
 
             Assert.Equal(expected, acc.Balance);
+
+            Assert.True(acc.Transactions.Count == 2);
+            ITransaction t = acc.Transactions[1];
+            Assert.Equal(2, t.TransactionID);
+            Assert.True(before <= t.Time && t.Time <= after);
+            Assert.Equal("WITHDRAW", t.Message);
+            Assert.Equal(-amount, t.Amount);
         }
 
         [Fact]
